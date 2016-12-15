@@ -21,3 +21,5 @@ How to configure auto relaunch:
 If you have the Steam version, open the ini file and change gameVersion to 0 instead of 1
 If you have the Social Club version of the game and run it through Steam, edit the game version to 1 and change game id to the non steam game id.
 Otherwise set gameVersion to anything other than 0 or 1 and it won't auto relaunch. 2 works fine.
+
+The latest version of this script is always available on https://github.com/PhantomGamers/gta5hk
