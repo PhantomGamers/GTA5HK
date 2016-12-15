@@ -109,7 +109,7 @@ becomeCEO:
 If not GetKeyState("ScrollLock", "T") {
 	Send {m}
 	sleep, 120
-	Send {Down}{Down}{Down}{Down}{Down}{Enter}{Enter}{Enter}
+	Send {Down}{Down}{Down}{Down}{Down}{Down}{Enter}{Enter}{Enter}
 	SetScrollLockState, On
 	return
 }
@@ -128,7 +128,7 @@ Send {m}
 sleep, 120
 If GetKeyState("ScrollLock", "T")
 	Send {Down}
-Send {Down}{Down}{Enter}{Enter}{Down}{Down}{Down}{Down}{Right}{Right}{Right}{m}
+Send {Down}{Down}{Enter}{Down}{Enter}{Down}{Down}{Down}{Right}{Right}{Right}{m}
 return
 ; </maskItUp>
 
@@ -139,7 +139,7 @@ Send {m}
 sleep, 120
 If GetKeyState("ScrollLock", "T")
 	Send {Down}
-Send {Down}{Down}{Enter}{Enter}{Up}{Up}{Right}{Left}{m}
+Send {Down}{Down}{Enter}{Down}{Enter}{Up}{Up}{Up}{Up}{Right}{Left}{m}
 return
 ; </scarfItUp>
 
