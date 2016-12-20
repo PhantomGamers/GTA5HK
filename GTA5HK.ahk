@@ -122,13 +122,14 @@ return
 ; </becomeCEO>
 
 ; <maskItUp>
-; Equips the second to the right mask, in order to trigger the armor glitch.
+; Equips the second to the right mask, in order to trigger the armor glitch. Will only work in heists.
+; In modes other than heists this will switch helmets instead.
 maskitUp:
 Send {m}
 sleep, 120
 If GetKeyState("ScrollLock", "T")
 	Send {Down}
-Send {Down}{Down}{Enter}{Down}{Enter}{Down}{Down}{Down}{Right}{Right}{Right}{m}
+Send {Down}{Down}{Enter}{Down}{Enter}{Down}{Down}{Down}{Down}{Right}{Right}{Right}{m}
 return
 ; </maskItUp>
 
