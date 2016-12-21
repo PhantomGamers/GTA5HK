@@ -11,6 +11,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;SendMode Input  ; Recommended for new scripts due to its superior speed and reliability. Breaks in GTA
 #SingleInstance Force ; Ensures only one instance of the script is running.
 SetTimer, reloadScript, 90000
+isCEO := 0 ; Hacky CEO toggle
 ; </Environment Setup>
 
 ; <Assign Hotkey and Delay Values>
@@ -26,6 +27,8 @@ IniRead, switchScarfKey, GTA5HK.ini, Controls, switchScarfKey, F24
 IniRead, becomeCEOKey, GTA5HK.ini, Controls, becomeCEOKey, F24
 IniRead, gameVersion, GTA5HK.ini, Controls, gameVersion, 2
 IniRead, gameID, GTA5HK.ini, Controls, gameID, 0
+IniRead, AutoClick, GTA5HK.ini, Controls, AutoClick, F24
+IniRead, toggleCEOMode, GTA5HK.ini, Controls, toggleCEOMode, F24
 
 ; <Hotkey Code Section>
 Hotkey, IfWinActive, ahk_class grcWindow ; Disables hotkeys when alt-tabbed or GTA is closed.
@@ -40,10 +43,13 @@ Hotkey, %statusTestKey%, HKTest
 Hotkey, %switchMaskKey%, maskItUp
 Hotkey, %switchScarfKey%, scarfItUp
 Hotkey, %becomeCEOKey%, becomeCEO
+Hotkey, %AutoClick%, AutoClick
+Hotkey, %toggleCEOMode%, toggleCEOMode
 
-setkeydelay, 25, 5  ; Sets delay(ms) between keystrokes issued. Arguments are delay between keystrokes and press duration, respectively.
+SetKeyDelay, 25, 5  ; Sets delay(ms) between keystrokes issued. Arguments are delay between keystrokes and press duration, respectively.
 ; They might be able to go lower but these values are pretty fast and work reliably.
-return
+SetMouseDelay, 25
+Return
 ; </Hotkey Code Section>
 
 ; <Macro Code Section>
@@ -52,73 +58,74 @@ return
 ; Eats two snacks out of second snack slot automatically.
 AutoHealth:
 Send {m}
-sleep, 120
-If GetKeyState("ScrollLock", "T")
+Sleep, 120
+If (isCEO)
 	Send {Down}
 Send {Down}{Enter}{Down}{Down}{Enter}
 Send {Down}{Enter}{Enter}{m}
-return
+Return
 ; </AutoHealth>
 
 ; <HealthMenu>
 ; Opens up your snack mnenu for manual selection of snacks.
 HealthMenu:
 Send {m}
-sleep, 120
-If GetKeyState("ScrollLock", "T")
+Sleep, 120
+If (isCEO)
 	Send {Down}
 Send {Down}{Enter}{Down}{Down}{Enter}
-return
+Return
 ; </HealthMenu>
 
 ; <AutoArmor>
 ; Equips super heavy armor automatically.
 AutoArmor:
 Send {m}
-sleep, 120
-If GetKeyState("ScrollLock", "T")
+Sleep, 120
+If (isCEO)
 	Send {Down}
 Send {Down}{Enter}{Down}{Enter}
 Send {Down}{Down}{Down}{Down}{Enter}{m}
-return
+Return
 ; </AutoArmor>
 
 ; <PassiveMode>
 ; Toggles passive mode on or off.
 PassiveMode:
 Send {m}
-sleep, 120
+Sleep, 120
 Send {Up}{Enter}{m}
-return
+Return
 ; </PassiveMode>
 
 ; <RetCar>
 ; Requests delivery of personal vehicle.
 RetCar:
 Send {m}
-sleep, 120
-If GetKeyState("ScrollLock", "T")
+Sleep, 120
+If (isCEO)
 	Send {Down}
 Send {Down}{Down}{Down}{Enter}{Enter}{m}
-return
+Return
 ; </RetCar>
 
 ; <becomeCEO>
 ; Becomes a CEO.
 becomeCEO:
-If not GetKeyState("ScrollLock", "T") {
+If (!isCEO) 
+{
 	Send {m}
-	sleep, 120
+	Sleep, 120
 	Send {Down}{Down}{Down}{Down}{Down}{Down}{Enter}{Enter}{Enter}
-	SetScrollLockState, On
-	return
+	Goto toggleCEOMode
+	Return
 }
 
 Send {m}
-sleep, 120
+Sleep, 120
 Send {Enter}{Up}{Enter}{Enter}
-SetScrollLockState, Off
-return
+Goto toggleCEOMode
+Return
 ; </becomeCEO>
 
 ; <maskItUp>
@@ -126,22 +133,22 @@ return
 ; In modes other than heists this will switch helmets instead.
 maskitUp:
 Send {m}
-sleep, 120
-If GetKeyState("ScrollLock", "T")
+Sleep, 120
+If (isCEO)
 	Send {Down}
 Send {Down}{Down}{Enter}{Down}{Enter}{Down}{Down}{Down}{Down}{Right}{Right}{Right}{m}
-return
+Return
 ; </maskItUp>
 
 ; <scarfItUp>
 ; Equips and unequips a scarf. Same as maskItUp.
 scarfitUp:
 Send {m}
-sleep, 120
-If GetKeyState("ScrollLock", "T")
+Sleep, 120
+If (isCEO)
 	Send {Down}
 Send {Down}{Down}{Enter}{Down}{Enter}{Up}{Up}{Up}{Up}{Right}{Left}{m}
-return
+Return
 ; </scarfItUp>
 
 ; <RestartGTA>
@@ -150,28 +157,47 @@ RestartGTA:
 Process, Close, GTAVLauncher.exe
 Process, Close, GTA5.exe
 FileDelete, %A_AppData%\..\Local\Rockstar Games\GTA V\in-* ; Prevents safemode warning
-sleep, 3000
-if (gameVersion = 0) 
+Sleep, 3000
+If (gameVersion = 0) 
 {
 	Run steam://rungameid/271590 
-} else if (gameVersion = 1) 
+} Else If (gameVersion = 1) 
 { 
 	Run steam://rungameid/%gameID% 
 }
-return
+Return
 ; </RestartGTA>
+
+; <AutoClick>
+; Automatically click your mouse. Useful for collecting money in Pacific Standard.
+; Also works for rapid firing semi-automatic weapons.
+AutoClick:
+Loop
+{
+	Send {LButton}
+	If (GetKeyState(AutoClick, "P")=0)
+		Break
+}
+Return
+; </AutoClick>
+
+; <toggleCEOMode>
+; Toggles whether or not the script should expect you to be CEO.
+toggleCEOMode:
+isCEO := !isCEO
+Return
 
 ; <HotkeyTest>
 ; Use to confirm hotkeys are functional without doing anything.
 HKTest:
 SoundBeep
-return
-; </HotkeyTest>
+Return
+; </HotkeyTest>		
 
-;</Macro Code Section>
+;</Macro Code Section>						
 
 reloadScript:
 Process, Exist, gta5.exe
-if (ErrorLevel != 1)
+If (ErrorLevel != 1)
 	Reload
-return
+Return
